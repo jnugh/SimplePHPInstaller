@@ -16,12 +16,21 @@ class installer extends base{
 
         if(!isset($_SESSION['installer'])){
             $_SESSION['installer'] = true;
-            header("Location: index.php?scLock=" . urldecode(sha1(microtime())));
+            header("Location: installer.php");
         }
+
+        try{
+            $this->_readManifest(MAIN_PATH_SIMPLE_INSTALLER.'data/manifest.xml');
+        } catch(Exception $e){
+            $this->_addBaseError('manifest', $e->getMessage());
+        }
+
         $this->_displayBaseErrors(); //This will likely kill the entire installer if any errors where found!
+
     }
     public function  __destruct() {
-        ;
+        $this->_displayBaseErrors();
+        $this->_displayActivity();
     }
     private function _readData(){
 
@@ -31,10 +40,17 @@ class installer extends base{
     }
     private function _readManifest($manifestFile){
         if($this->_manifestData !== false) throw new Exception ("Manifest cannot be loaded twice");
-        $this->_manifestData = simplexml_load_file($manifestFile);
+        if(!file_exists($manifestFile))
+            throw new Exception ("Manifest cannot be found, file " . $manifestFile . " does not exist.");
+        $this->_manifestData = @simplexml_load_file($manifestFile);
+        if(!$this->_manifestData || !count($this->_manifestData) == 0)
+                throw new Exception ("Manifest cannot be loaded, file " . $manifestFile . " is not readable, empty or has XML errors.");
         if(!isset($_SESSION['manifest']))
             $_SESSION['manifest'] = $this->_manifestData;
-        if(serialize($this->_manifestData) != serialize($_SESSION['manifest'])) throw new Exception ("Manifest file changed while installation");
+        if(serialize($this->_manifestData) != serialize($_SESSION['manifest'])){
+            $_SESSIOn = array();
+            throw new Exception ("Manifest file changed while installation! Try to go again, the system deletes all infos about the last installation.");
+        }
     }
     private function _generatePluginCache(){
         
