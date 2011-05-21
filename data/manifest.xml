@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<installer>
+	<general>
+		<name>Litotex 0.8 Beta1</name>
+		<description>Former an open source browsergame engine, now a general framework. The engine will be installable later when we got this all done!</description>
+		<version>0.8b1</version>
+	</general>
+	<handler>
+		<general>
+			<class>litotexGeneralSettingsHandler</class>
+			<order>1</order>
+			<data>
+				<element name="pageTitle" type="string">setPageTitle</element>
+				<element name="pageDescription" type="text">setPageDescription</element>
+			</data>
+		</general>
+		<database>
+			<class>litotexDatabaseHandler</class>
+			<order>2</order>
+			<data>
+				<allowed>MySQL</allowed>
+			</data>
+		</database>
+		<plugin>
+			<class>litotexPathSettings</class>
+			<order>3</order>
+		</plugin>
+		<plugin>
+			<class>litotexinsatllAddons</class>
+			<order>4</order>
+		</plugin>
+		<userData>
+			<class>litotexUserdataHandler</class>
+			<order>5</order>
+			<data>
+				<element name="username" type="string">setUserName</element>
+				<element name="password" type="password">setUserPassword</element>
+				<element name="email" type="string">setUserEmail</element>
+			</data>
+		</userData>
+		<plugin>
+			<class>simpleInstallerSelfRemoval</class>
+			<order>6</order>
+		</plugin>
+	</handler>
+	<log>
+		<path>data/installer/log</path>
+	</log>
+</installer>

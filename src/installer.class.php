@@ -16,7 +16,7 @@ class installer extends base{
 
         if(!isset($_SESSION['installer'])){
             $_SESSION['installer'] = true;
-            header("Location: installer.php");
+            header("Location: install.php");
         }
 
         try{
@@ -42,13 +42,16 @@ class installer extends base{
         if($this->_manifestData !== false) throw new Exception ("Manifest cannot be loaded twice");
         if(!file_exists($manifestFile))
             throw new Exception ("Manifest cannot be found, file " . $manifestFile . " does not exist.");
-        $this->_manifestData = @simplexml_load_file($manifestFile);
-        if(!$this->_manifestData || !count($this->_manifestData) == 0)
+        if(!defined('DEBUG_SIMPLE_INSTALLER'))
+            $this->_manifestData = @simplexml_load_file($manifestFile);
+        else
+            $this->_manifestData = simplexml_load_file($manifestFile);
+        if(!$this->_manifestData || $this->_manifestData->count() == 0)
                 throw new Exception ("Manifest cannot be loaded, file " . $manifestFile . " is not readable, empty or has XML errors.");
         if(!isset($_SESSION['manifest']))
-            $_SESSION['manifest'] = $this->_manifestData;
-        if(serialize($this->_manifestData) != serialize($_SESSION['manifest'])){
-            $_SESSIOn = array();
+            $_SESSION['manifest'] = $this->_manifestData->asXML();
+        if($this->_manifestData->asXML() != $_SESSION['manifest']){
+            $_SESSION = array();
             throw new Exception ("Manifest file changed while installation! Try to go again, the system deletes all infos about the last installation.");
         }
     }
