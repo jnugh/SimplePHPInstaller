@@ -1,6 +1,10 @@
 <?php
 abstract class base{
     private $_baseErrors = array();
+    /**
+     * Tpl
+     * @var Smarty
+     */
     protected $_smarty = null;
     public function  __construct() {
         $this->_smarty = new Smarty();

@@ -12,6 +12,7 @@
 			<data>
 				<element name="pageTitle" type="string">setPageTitle</element>
 				<element name="pageDescription" type="text">setPageDescription</element>
+                                <template>installer/general.tpl</template>
 			</data>
 		</general>
 		<database>
@@ -19,15 +20,22 @@
 			<order>2</order>
 			<data>
 				<allowed>MySQL</allowed>
+                                <template>installer/db.tpl</template>
 			</data>
 		</database>
 		<plugin>
 			<class>litotexPathSettings</class>
 			<order>3</order>
+                        <data>
+                            <template>installer/paths.tpl</template>
+                        </data>
 		</plugin>
 		<plugin>
 			<class>litotexinsatllAddons</class>
 			<order>4</order>
+                        <data>
+                            <template>installer/addons.tpl</template>
+                        </data>
 		</plugin>
 		<userData>
 			<class>litotexUserdataHandler</class>
@@ -36,11 +44,15 @@
 				<element name="username" type="string">setUserName</element>
 				<element name="password" type="password">setUserPassword</element>
 				<element name="email" type="string">setUserEmail</element>
+                                <template>installer/user.tpl</template>
 			</data>
 		</userData>
 		<plugin>
 			<class>simpleInstallerSelfRemoval</class>
 			<order>6</order>
+                        <data>
+                            <template>installer/removeInstaller.tpl</template>
+                        </data>
 		</plugin>
 	</handler>
 	<log>

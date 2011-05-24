@@ -26,8 +26,30 @@ class installer extends base{
         }
 
         $this->_displayBaseErrors(); //This will likely kill the entire installer if any errors where found!
+        try{
+            $this->_setUpInstallerRuntime();
+        } catch(Exception $e){
+            $this->_addBaseError('general', $e->getMessage());
+        }
 
+        try{
+            $this->_loadActivity();
+        } catch(Exception $e){
+            $this->_addBaseError('activity', $e->getMessage());
+        }
     }
+
+    private function _setUpInstallerRuntime(){
+        if(!@$this->_manifestData->general->name)
+                throw new Exception("Manifest file does not contain general/name");
+        if(!@$this->_manifestData->general->description)
+                throw new Exception("Manifest file does not contain general/description");
+        if(!@$this->_manifestData->general->version)
+                throw new Exception("Manifest file does not contain general/version");
+        $this->_smarty->assign(array('TITLE' => $this->_manifestData->general->name, 'description' => $this->_manifestData->general->description, 'version' => $this->_manifestData->general->version));
+        $this->_smarty->setTemplateDir(MAIN_PATH_SIMPLE_INSTALLER.'tpl');
+    }
+
     public function  __destruct() {
         $this->_displayBaseErrors();
         $this->_displayActivity();
@@ -70,14 +92,16 @@ class installer extends base{
         $string = date('d.m.Y H:i.s: ', time()) . $message . "\n";
         return fwrite($this->_logFile, $string);
     }
-    private function _generatePluginCache(){
-        
-    }
     private function _loadActivity(){
-
+        $this->_currentActivity = 'installer/general.tpl';
     }
     private function _displayActivity(){
-
+        try{
+            $this->_smarty->display(MAIN_PATH_SIMPLE_INSTALLER . 'tpl/' . $this->_currentActivity);
+        }catch(Exception $e){
+            $this->_addBaseError('activity', $e->getMessage());
+            $this->_displayBaseErrors();
+        }
     }
     private function _parseInput(){
 
