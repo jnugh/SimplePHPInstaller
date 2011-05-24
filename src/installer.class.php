@@ -54,6 +54,21 @@ class installer extends base{
             $_SESSION = array();
             throw new Exception ("Manifest file changed while installation! Try to go again, the system deletes all infos about the last installation.");
         }
+        //Read the data
+        if(!defined('DEBUG_SIMPLE_INSTALLER'))
+            $this->_logFile = @fopen(MAIN_PATH_SIMPLE_INSTALLER.$this->_manifestData->log->path, 'a+');
+        else
+            $this->_logFile = fopen(MAIN_PATH_SIMPLE_INSTALLER.$this->_manifestData->log->path, 'a+');
+        if(!$this->_logFile){
+            throw new Exception ("Could not create logfile at ".MAIN_PATH_SIMPLE_INSTALLER.$this->_manifestData->log->path.".");
+        }
+        $this->_writeLog("Logfile opened.");
+    }
+    private function _writeLog($message){
+        if(!$this->_logFile)
+                throw new Exception ("Could not write to logfile.");
+        $string = date('d.m.Y H:i.s: ', time()) . $message . "\n";
+        return fwrite($this->_logFile, $string);
     }
     private function _generatePluginCache(){
         
